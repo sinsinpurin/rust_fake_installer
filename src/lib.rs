@@ -1,26 +1,36 @@
 use indicatif::{ProgressBar, ProgressStyle};
 use std::{thread, time};
+use std::fs::File;
+use std::io::prelude::*;
 
 pub struct Installer{
-    pub random_num: i32,
     pub mode: Mode
 }
 
 pub enum Mode {
-    InstallerFile,
+    InstallFile,
     Hacking
 }
 
 impl Installer{
-    pub fn new(random_num: i32, mode: Mode) -> Result<Installer, &'static str>{
-        Ok(Installer{random_num, mode})
+    pub fn new( mode: Mode) -> Result<Installer, &'static str>{
+        Ok(Installer{mode})
     }
     pub fn run(&self){
-        //fake_progressbar("");
-        &self.random_print();
+        match &self.mode{
+            Mode::InstallFile => {
+                // 
+                &self.run_installfile_mode();
+            }
+            Mode::Hacking => {
+                println!("hacking mode");
+                &self.run_hacking_mode();
+            }
+        }
     }
 
-    fn random_print(&self){
+    // 具体的なinstallfileモードの処理
+    fn run_installfile_mode(&self){
         let filenames = get_file_strings(&self.mode);
         let vec_filename: Vec<&str> = filenames.split_whitespace().collect();
 
@@ -28,13 +38,17 @@ impl Installer{
             fake_progressbar(filename);
         }
     }
+
+    // 具体的なハッキングモードの処理
+    fn run_hacking_mode(&self){
+
+    }
 }
 
+// 偽のシーケンスバーを表示
 pub fn fake_progressbar(filename : &str){
     let ten_millis = time::Duration::from_millis(100);
     let total_size = 100;
-    print!("install {}", filename);
-    print!(".");
     
     let bar = ProgressBar::new(total_size);
     let sty = ProgressStyle::default_bar()
@@ -50,14 +64,12 @@ pub fn fake_progressbar(filename : &str){
     bar.finish_with_message("downloaded");
 }
 
-use std::fs::File;
-use std::io::prelude::*;
-
+// file名などに使用する辞書 txtフォルダ
 pub fn get_file_strings(mode: &Mode) -> String{
     let mut file: File;
     let mut content = String::new();
     match mode{
-        Mode::InstallerFile=>{
+        Mode::InstallFile=>{
             file = File::open("inst.txt").expect("error: inst.txt couldn't import.");
             file.read_to_string(&mut content).expect("error: inst.txt couldn't read.");
         },
