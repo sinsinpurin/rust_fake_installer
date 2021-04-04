@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 indicatif = "0.15.0"
+rand = "0.8.3"
+chrono = "0.4.19"
